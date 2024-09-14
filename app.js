@@ -4,13 +4,16 @@ const mongoose = require("mongoose");
 const Listing = require("./models/listing");
 const path = require("path");
 const methodOverride = require("method-override");
-
+const ejsMate = require("ejs-mate");
+const exp = require("constants");
 
 app.set("view engine" , "ejs");
 app.set("views" , path.join(__dirname , "views"));
 
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
+app.engine("ejs" , ejsMate);
+app.use(express.static(path.join(__dirname , "/public")));
 
 main().then(()=>{
     console.log("successfull");
@@ -73,8 +76,6 @@ app.get("/listing/:id" , async(req , res)=>{
     let listing  = await Listing.findById(id);
     res.render("listing/show.ejs" , {listing});
 })
-
-
  
 app.listen(3000 , ()=>{
     console.log("app listening on 3000");
