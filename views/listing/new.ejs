@@ -2,15 +2,15 @@
 <body>
     <div class="row">
         <div class="col-8 offset-2">
-    <form method="POST" action="/listing">
+    <form method="POST" action="/listing" novalidate  class="needs-validation" >
         <div class="mb-2">
             <label for="title" class="form-label">Title</label>
-            <input name="listing[title]" type="text" class="form-control">
+            <input name="listing[title]" type="text" class="form-control" required>
         </div>
    
         <div class="mb-2">
             <label for="description" class="form-label" >Description</label>
-            <textarea name="listing[description]" class="form-control" ></textarea>
+            <textarea name="listing[description]" class="form-control" required ></textarea>
         </div>
 
         <div class="mb-2">
@@ -22,12 +22,13 @@
 
             <div class="mb-2 col-md-4">
                 <label for="price" class="form-label" >Price</label>
-                <input name="listing[price]" placeholder="add price" type="number" class="form-control">
+                <input name="listing[price]" placeholder="add price" type="number" class="form-control" required>
             </div>
 
             <div class="mb-2 col-md-8">
                 <label for="country" class="form-label" >Country</label>
-                <input name="listing[country]" placeholder="add country name" type="text" class="form-control">
+                <input name="listing[country]" placeholder="add country name" type="text" class="form-control" required>
+        
             </div>
        
         </div>
