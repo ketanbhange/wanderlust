@@ -13,8 +13,13 @@ const {listingSchema} = require("./schema.js");
 app.set("view engine" , "ejs");
 app.set("views" , path.join(__dirname , "views"));
 
+
+
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
+
+
+
 app.engine("ejs" , ejsMate);
 app.use(express.static(path.join(__dirname , "/public")));
 
@@ -31,22 +36,33 @@ app.get("/" , (req , res)=>{
     res.send("i am root");
 })
 
+const validateLisiting = (req , res , next)=>{
+    let {error} = listingSchema.validate(req.body);
+  
+    if(error){
+        let errMsg = error.details.map((el) => el.message).join(",");
+        throw new ExpressError(400 ,errMsg);
+    }else{
+        next();
+    }
+}
+
 app.get("/listing" , async (req , res)=>{
    let allListing =  await Listing.find({});
    res.render("listing/index.ejs" ,{allListing});
 })
 //this get before id because it treat like a id to new
 
+
+
 app.get("/listing/new" , (req, res)=>{
     res.render("listing/new.ejs");
 })
 
-app.post("/listing" , wrapAsync(async(req , res , next)=>{
-    let result = listingSchema.validate(req.body);
-    console.log(result);
-    if(result.error){
-        throw new ExpressError(400 , result.error);
-    }
+
+
+app.post("/listing" , validateLisiting,  wrapAsync(async(req , res , next)=>{
+    
     if(!req.body.listing){
         throw new ExpressError(400 , "send valid data from listing");
     }
@@ -58,13 +74,13 @@ app.post("/listing" , wrapAsync(async(req , res , next)=>{
         next(err);
 }));
 
-app.get("/listing/:id/edit", wrapAsync(async(req , res)=>{
+app.get("/listing/:id/edit",  wrapAsync(async(req , res)=>{
     let {id} = req.params;
     const listing = await Listing.findById(id);
     res.render("listing/edit.ejs" , {listing});
 }))
-
-app.put("/listing/:id" , wrapAsync(async (req , res)=>{
+ 
+app.put("/listing/:id" , validateLisiting , wrapAsync(async (req , res)=>{
     //alternative is
     // let {id} = req.params;
     // let {price: newprice} = req.body;
@@ -98,7 +114,7 @@ app.all("*" , (req , res , next)=>{
     next(new ExpressError(404 , "page not found"));
 });
 app.use((err , req , res , next) =>{
-    let {statusCode=500 , message="somtging went wrong"} = err;
+    let {statusCode=500 , message="something went wrong"} = err;
     res.status(statusCode).render("error.ejs" , {message});
    // res.status(statusCode).send(message);
 })
