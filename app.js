@@ -8,7 +8,10 @@ const ejsMate = require("ejs-mate");
 const exp = require("constants");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const {listingSchema} = require("./schema.js");
+const {listingSchema , reviewSchema} = require("./schema.js");
+const Review = require("./models/review.js");
+const listing = require("./routes/listing.js");
+const review = require("./routes/review.js");
 
 app.set("view engine" , "ejs");
 app.set("views" , path.join(__dirname , "views"));
@@ -18,6 +21,8 @@ app.set("views" , path.join(__dirname , "views"));
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
 
+app.use("/listing" , listing);
+app.use("/listing/:id/reviews" , review);
 
 
 app.engine("ejs" , ejsMate);
@@ -36,76 +41,8 @@ app.get("/" , (req , res)=>{
     res.send("i am root");
 })
 
-const validateLisiting = (req , res , next)=>{
-    let {error} = listingSchema.validate(req.body);
-  
-    if(error){
-        let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400 ,errMsg);
-    }else{
-        next();
-    }
-}
-
-app.get("/listing" , async (req , res)=>{
-   let allListing =  await Listing.find({});
-   res.render("listing/index.ejs" ,{allListing});
-})
-//this get before id because it treat like a id to new
 
 
-
-app.get("/listing/new" , (req, res)=>{
-    res.render("listing/new.ejs");
-})
-
-
-
-app.post("/listing" , validateLisiting,  wrapAsync(async(req , res , next)=>{
-    
-    if(!req.body.listing){
-        throw new ExpressError(400 , "send valid data from listing");
-    }
-
-        const newListing = new Listing(req.body.listing);
-        await newListing.save();
-        console.log(newListing);
-        res.redirect("/listing");
-        next(err);
-}));
-
-app.get("/listing/:id/edit",  wrapAsync(async(req , res)=>{
-    let {id} = req.params;
-    const listing = await Listing.findById(id);
-    res.render("listing/edit.ejs" , {listing});
-}))
- 
-app.put("/listing/:id" , validateLisiting , wrapAsync(async (req , res)=>{
-    //alternative is
-    // let {id} = req.params;
-    // let {price: newprice} = req.body;
-    // await Listing.findByIdAndUpdate(id , {price: newprice});
-
-    //usting key value pair we deconstruct the listing using (...) dots
-    let {id} = req.params;
-    await Listing.findByIdAndUpdate(id , {...req.body.listing});
-    res.redirect("/listing");
-}))
-
-app.delete("/listing/:id" , wrapAsync(async (req , res)=>{
-    let {id} = req.params;
-    let deletedList = await Listing.findByIdAndDelete(id);
-    console.log(deletedList);
-    res.redirect("/listing");
-}))
-
-
-app.get("/listing/:id" , wrapAsync(async(req , res)=>{
-    let {id} = req.params;
-    let listing  = await Listing.findById(id);
-    res.render("listing/show.ejs" , {listing});
-}))
- 
 app.listen(3000 , ()=>{
     console.log("app listening on 3000");
 })
@@ -119,9 +56,11 @@ app.use((err , req , res , next) =>{
    // res.status(statusCode).send(message);
 })
 
-app.use((err , req , res , next)=>{
-    res.send("something went wrong");
-})
+
+
+// app.use((err , req , res , next)=>{
+//     res.send("something went wrong");
+// })
 
 
 
