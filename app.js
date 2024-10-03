@@ -12,6 +12,9 @@ const {listingSchema , reviewSchema} = require("./schema.js");
 const Review = require("./models/review.js");
 const listing = require("./routes/listing.js");
 const review = require("./routes/review.js");
+const session = require("express-session");
+
+
 
 app.set("view engine" , "ejs");
 app.set("views" , path.join(__dirname , "views"));
@@ -37,13 +40,25 @@ main().then(()=>{
 async function main() {
     await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
 }
+
+const sessionOptions = {
+    secret : "mysupersecretcode",
+    resave:false,
+    saveUninitialized:true,
+}
+
+
+app.use(session(sessionOptions));
+
+
+
 app.get("/" , (req , res)=>{
     res.send("i am root");
 })
 
 
 
-app.listen(3000 , ()=>{
+app.listen(3002, ()=>{
     console.log("app listening on 3000");
 })
 
