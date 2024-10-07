@@ -5,6 +5,7 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const path = require("path");
 const {listingSchema , reviewSchema} = require("../schema.js");
+const flash = require("connect-flash/lib/flash.js");
 
 
 const validateLisiting = (req , res , next)=>{
@@ -38,21 +39,31 @@ router.get("/" , async (req , res)=>{
  router.get("/:id" , async(req , res)=>{
     let {id} = req.params;
     let listing  = await Listing.findById(id).populate("reviews");
+   
     res.render("listing/show.ejs" , {listing});
+    // if(!listing){
+    //     req.flash("error" , "Listing your are requested for does not exist");
+    //     res.redirect("/listing");
+    // } handle later
 });
  
  
  
  router.post("/" , validateLisiting,  wrapAsync(async(req , res , next)=>{
      
-     if(!req.body.listing){
-         throw new ExpressError(400 , "send valid data from listing");
-     }
+    //  if(!req.body.listing){
+    //      throw new ExpressError(400 , "send valid data from listing");
+    //  }
  
          const newListing = new Listing(req.body.listing);
          await newListing.save();
-         console.log(newListing);
+         req.flash("success" , "New Listing Created");
          res.redirect("/listing");
+       
+         console.log(newListing);
+        
+         
+        
          //next(err);
  }));
  
@@ -60,6 +71,7 @@ router.get("/" , async (req , res)=>{
      let {id} = req.params;
      const listing = await Listing.findById(id);
      res.render("listing/edit.ejs" , {listing});
+     
  })
   
  router.put("/:id" , validateLisiting , async (req , res)=>{
@@ -72,13 +84,16 @@ router.get("/" , async (req , res)=>{
      let {id} = req.params;
      await Listing.findByIdAndUpdate(id , {...req.body.listing});
      res.redirect("/listing");
+    
  })
  
  router.delete("/:id" ,  async (req , res)=>{
      let {id} = req.params;
      let deletedList = await Listing.findByIdAndDelete(id);
+     req.flash("success" , "Listing Is Deleted");
      console.log(deletedList);
      res.redirect("/listing");
+
  })
 
  module.exports = router;
