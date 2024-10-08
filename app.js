@@ -18,6 +18,7 @@ const cookie = require("express-session/session/cookie.js");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
+const UserRouter = require("./routes/user.js");
 
 
 
@@ -54,6 +55,7 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use((req , res , next) =>{
     res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
     next();
 })
 
@@ -70,6 +72,7 @@ app.get("/demouser" , async (req , res) =>{
 
 app.use("/listing" , listing);
 app.use("/listing/:id/reviews" , review);
+app.use("/" , UserRouter);
 
 
 app.engine("ejs" , ejsMate);

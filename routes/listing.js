@@ -6,6 +6,7 @@ const ExpressError = require("../utils/ExpressError.js");
 const path = require("path");
 const {listingSchema , reviewSchema} = require("../schema.js");
 const flash = require("connect-flash/lib/flash.js");
+const {isLogedIn} = require("../middleware.js");
 
 
 const validateLisiting = (req , res , next)=>{
@@ -24,7 +25,7 @@ const validateLisiting = (req , res , next)=>{
 
 
 
-router.get("/" , async (req , res)=>{
+router.get("/" ,  async (req , res)=>{
     let allListing =  await Listing.find({});
     res.render("listing/index.ejs" ,{allListing});
  })
@@ -32,7 +33,8 @@ router.get("/" , async (req , res)=>{
 
  
  
- router.get("/new" , (req, res)=>{
+ router.get("/new" , isLogedIn , (req, res)=>{
+    
      res.render("listing/new.ejs");
  })
 
@@ -67,7 +69,7 @@ router.get("/" , async (req , res)=>{
          //next(err);
  }));
  
- router.get("/:id/edit", async(req , res)=>{
+ router.get("/:id/edit", isLogedIn, async(req , res)=>{
      let {id} = req.params;
      const listing = await Listing.findById(id);
      res.render("listing/edit.ejs" , {listing});
@@ -87,7 +89,7 @@ router.get("/" , async (req , res)=>{
     
  })
  
- router.delete("/:id" ,  async (req , res)=>{
+ router.delete("/:id" , isLogedIn,  async (req , res)=>{
      let {id} = req.params;
      let deletedList = await Listing.findByIdAndDelete(id);
      req.flash("success" , "Listing Is Deleted");
