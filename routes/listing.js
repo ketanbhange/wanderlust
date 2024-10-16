@@ -41,12 +41,12 @@ router.get("/" ,  async (req , res)=>{
  router.get("/:id" , async(req , res)=>{
     let {id} = req.params;
     let listing  = await Listing.findById(id).populate("reviews").populate("owner");
-   console.log(listing);
+    console.log(listing);
     res.render("listing/show.ejs" , {listing});
-    // if(!listing){
-    //     req.flash("error" , "Listing your are requested for does not exist");
-    //     res.redirect("/listing");
-    // } handle later
+    if(!listing){
+        req.flash("error" , "Listing your are requested for does not exist");
+        res.redirect("/listing");
+    } // handle later
 });
  
  
@@ -84,9 +84,15 @@ router.get("/" ,  async (req , res)=>{
      // await Listing.findByIdAndUpdate(id , {price: newprice});
  
      //usting key value pair we deconstruct the listing using (...) dots
-     let {id} = req.params;
+      let {id} = req.params;
+     let listing =   await Listing.findById(id);
+      if(!listing.owner.equals(req.user._id)){
+         req.flash("error" , "you dont have permission to edit");
+        return  res.redirect(`/listing/${id}`);
+        }
+
      await Listing.findByIdAndUpdate(id , {...req.body.listing});
-     res.redirect("/listing");
+     res.redirect(`/listing/${id}`);
     
  })
  
