@@ -7,6 +7,7 @@ const path = require("path");
 const {listingSchema , reviewSchema} = require("../schema.js");
 const flash = require("connect-flash/lib/flash.js");
 const {isLogedIn} = require("../middleware.js");
+const ListingControler = require("../controller/listing.js");
 
 
 const validateLisiting = (req , res , next)=>{
@@ -25,85 +26,24 @@ const validateLisiting = (req , res , next)=>{
 
 
 
-router.get("/" ,  async (req , res)=>{
-    let allListing =  await Listing.find({});
-    res.render("listing/index.ejs" ,{allListing});
- })
+router.get("/" ,  (ListingControler.index));
  //this get before id because it treat like a id to new
 
  
  
- router.get("/new" , isLogedIn , (req, res)=>{
-    
-     res.render("listing/new.ejs");
- })
+ router.get("/new" , isLogedIn , ListingControler.renderNewform);
 
- router.get("/:id" , async(req , res)=>{
-    let {id} = req.params;
-    let listing  = await Listing.findById(id).populate("reviews").populate("owner");
-    console.log(listing);
-    res.render("listing/show.ejs" , {listing});
-    if(!listing){
-        req.flash("error" , "Listing your are requested for does not exist");
-        res.redirect("/listing");
-    } // handle later
-});
+ router.get("/:id" , ListingControler.showListings);
  
  
  
- router.post("/" , validateLisiting,  wrapAsync(async(req , res , next)=>{
-     
-    //  if(!req.body.listing){
-    //      throw new ExpressError(400 , "send valid data from listing");
-    //  }
+ router.post("/" , validateLisiting,  wrapAsync(ListingControler.creatListings));
  
-         const newListing = new Listing(req.body.listing);
-         newListing.owner = req.user._id;
-         await newListing.save();
-         req.flash("success" , "New Listing Created");
-         res.redirect("/listing");
-       
-         console.log(newListing);
-        
-         
-        
-         //next(err);
- }));
- 
- router.get("/:id/edit", isLogedIn, async(req , res)=>{
-     let {id} = req.params;
-     const listing = await Listing.findById(id);
-     res.render("listing/edit.ejs" , {listing});
-     
- })
+ router.get("/:id/edit", isLogedIn, ListingControler.rederEditForm);
   
- router.put("/:id" , validateLisiting , async (req , res)=>{
-     //alternative is
-     // let {id} = req.params;
-     // let {price: newprice} = req.body;
-     // await Listing.findByIdAndUpdate(id , {price: newprice});
+ router.put("/:id" , validateLisiting , ListingControler.updateListing);
  
-     //usting key value pair we deconstruct the listing using (...) dots
-      let {id} = req.params;
-     let listing =   await Listing.findById(id);
-      if(!listing.owner.equals(req.user._id)){
-         req.flash("error" , "you dont have permission to edit");
-        return  res.redirect(`/listing/${id}`);
-        }
-
-     await Listing.findByIdAndUpdate(id , {...req.body.listing});
-     res.redirect(`/listing/${id}`);
-    
- })
- 
- router.delete("/:id" , isLogedIn,  async (req , res)=>{
-     let {id} = req.params;
-     let deletedList = await Listing.findByIdAndDelete(id);
-     req.flash("success" , "Listing Is Deleted");
-     console.log(deletedList);
-     res.redirect("/listing");
-
- })
+ router.delete("/:id" , isLogedIn,  ListingControler.destroyListing);
 
  module.exports = router;
  

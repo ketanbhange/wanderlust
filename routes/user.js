@@ -4,46 +4,17 @@ const User = require("../models/user.js");
 const flash = require("connect-flash/lib/flash");
 const passport = require("passport");
 const {saveRedirectUrl} = require("../middleware.js");
+const userController = require("../controller/users.js");
 
 
-router.get("/signup" , (req , res)=>{
-    res.render("users/signup");
-})
+router.get("/signup" ,userController.rederSignUpform);
 
-router.post("/signup" , async (req  , res)=>{
-    let {username , email , password} = req.body;
-   let newUser =  new User({email , username});
-  let registeredUser =  await User.register(newUser , password);
-  console.log(registeredUser);
-  
-  req.login(registeredUser , (err)=>{ //this is a user can automaticaly login after sign in
-    if(err){
-        return next(err);
-    }
-    req.flash("success" , "user signup successfully");
-    res.redirect("/listing");
-  })
- 
-})
+router.post("/signup" , userController.signUp);
 
-router.get("/login" , (req , res)=>{
-    res.render("users/login.ejs");
-})
+router.get("/login" , userController.rederLoginForm);
 
-router.post("/login" , saveRedirectUrl, passport.authenticate("local" , {failureRedirect: '/login' , failureFlash:true}), async(req , res)=>{
-    req.flash("success" , "Welcome to wanderlust");
-    let redirectUrl = res.locals.redirectUrl || "/listing"; // this is for when we login first time on listing page;
-    res.redirect(redirectUrl);
-})
+router.post("/login" , saveRedirectUrl, passport.authenticate("local" , {failureRedirect: '/login' , failureFlash:true}), userController.Login );
 
-router.get("/logout" , (req , res , next) =>{
-    req.logout((err)=>{
-        if(err){
-            next(err);
-        }
-        req.flash("success" , "you are logged out!");
-        res.redirect("/listing");
-    })
-})
+router.get("/logout" , userController.logout);
 
 module.exports = router;

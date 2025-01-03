@@ -6,6 +6,8 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../models/listing");
 
+const ReviewController = require("../controller/reviews.js");
+
 
 
 const validateReview = (req , res , next)=>{
@@ -21,26 +23,8 @@ const validateReview = (req , res , next)=>{
 
 
 
-router.post("/" , validateReview , async (req , res)=>{
-       let listing = await Listing.findById(req.params.id);
-       let newReview = new Review(req.body.review);
-       listing.reviews.push(newReview);
+router.post("/" , validateReview , ReviewController.creatReview);
 
-       await newReview.save();
-       await listing.save();
-
-       console.log(newReview);
-       res.redirect(`/listing/${listing._id}`);
-})
-
-router.delete("/:reviewsId" , async (req ,res)=>{
-    let {id , reviewsId}= req.params;
-
-    //remove also listings reviews array
-    await Listing.findByIdAndUpdate(id , {$pull: {reviews:reviewsId}});
-
-    await Review.findByIdAndDelete(reviewsId);
-    res.redirect(`/listing/${id}`);
-})
+router.delete("/:reviewsId" , ReviewController.destroyReview);
 
 module.exports = router;
