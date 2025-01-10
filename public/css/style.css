@@ -1,4 +1,4 @@
-body{
+/* body{
     background-color: pink;
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@ body{
 }
 
 .fa-compass{
-    color: #fe424d;
+    color: blue;
     font-size: 2rem;
 }
 
@@ -24,6 +24,8 @@ body{
 .navbar-nav{
     background-color: white;
 }
+
+
 
 .f-info-links a {
     text-decoration: none;
@@ -51,9 +53,9 @@ body{
     flex-wrap: wrap;
     justify-content: space-evenly;
     align-items: center; /* Corrected this */
-}
+/* }   */
 
-.listing-card{
+/* .listing-card{
     border: none !important;
     margin-bottom: 2rem ;
 }
@@ -86,4 +88,215 @@ body{
 }
 .delete-btn{
     background-color: #222222 !important;
+}  */
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* General Body Styling */
+body {
+    background-color: pink;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
+
+/* Container Styling */
+.container {
+    flex: 1;
+}
+
+/* Button Styling */
+.btn {
+    margin-bottom: 1rem !important;
+    background-color: #fe424d !important;
+}
+
+/* Compass Icon Styling */
+.fa-compass {
+    color: blue;
+    font-size: 2rem;
+}
+
+/* Navbar Link Styling */
+.nav-link {
+    color: #222222 !important;
+}
+
+/* Navbar Container Styling */
+.navbar-nav {
+    background-color: white;
+}
+
+/* Footer Links Styling */
+.f-info-links a {
+    text-decoration: none;
+    color: #222222;
+}
+
+/* Footer Styling */
+.f-info-links {
+    width: 100%;
+}
+
+.f-info-social {
+    width: 100%;
+    font-size: 1.5rem;
+}
+
+.f-info-social i {
+    margin-right: 1rem;
+}
+
+.f-info {
+    text-align: center;
+    height: 8rem;
+    background-color: #ebebeb;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+/* Listing Card Styling */
+.listing-card {
+    border: none !important;
+    margin-bottom: 2rem;
+}
+
+/* Image Styling for Cards */
+.card-img-top {
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+/* Card Body Styling */
+.card-body {
+    padding: 0 !important;
+}
+
+/* Text Styling for Cards */
+.card-text p {
+    font-weight: 400 !important;
+}
+
+/* Card Link Styling */
+.listing-link {
+    text-decoration: none !important;
+}
+
+/* Card Image Overlay */
+.card-img-overlay {
+    opacity: 0;
+}
+
+.card-img-overlay:hover {
+    opacity: 0.2;
+    background-color: white;
+}
+
+/* Button Container Styling */
+.btns {
+    display: flex;
+}
+
+/* Delete Button Styling */
+.delete-btn {
+    background-color: #222222 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    /* Adjusting body layout for smaller screens */
+    body {
+        flex-direction: column;
+        padding: 0 10px;
+    }
+
+    /* Adjusting footer height */
+    .f-info {
+        height: auto;
+        padding: 1rem 0;
+    }
+
+    /* Navbar styling adjustments */
+    .navbar-nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Reducing font size for smaller screens */
+    .fa-compass {
+        font-size: 1.5rem;
+    }
+
+    /* Adjusting card image radius */
+    .card-img-top {
+        border-radius: 0.5rem !important;
+    }
+
+    /* Adjusting card text padding */
+    .card-body {
+        padding: 1rem;
+    }
+
+    /* Adjusting social media icons */
+    .f-info-social {
+        font-size: 1.2rem;
+    }
+
+    /* Making the buttons stack on small screens */
+    .btns {
+        flex-direction: column;
+    }
+
+    /* Adjusting footer links */
+    .f-info-links a {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further adjustments for very small screens */
+    .f-info {
+        height: auto;
+        padding: 1rem 0;
+    }
+
+    /* Further reducing font sizes for small screens */
+    .fa-compass {
+        font-size: 1.2rem;
+    }
+
+    .f-info-social {
+        font-size: 1rem;
+    }
+
+    .btns {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card-img-top {
+        border-radius: 0.25rem !important;
+    }
+
+    /* Adjust text size and layout for mobile-friendly cards */
+    .card-text p {
+        font-size: 0.9rem !important;
+    }
+}
+
